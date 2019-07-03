@@ -10,28 +10,44 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/">TEM Tool</a>
-<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-<span class="navbar-toggler-icon"></span>
-</button>
-<div class="collapse navbar-collapse" id="navbarNav">
-<ul class="nav justify-content-end" >
-<li class="nav-item dropdown">
-<%# <li class="nav-item active"> <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a></li> %> 
-<%# <li class="nav-item"><a class="nav-link" href="#">Features</a> </li> %>
-<%if(!currentUser){%>
-<li class="nav-item"> <a class="nav-link" href="/login">Login</a> </li> 
-<li class="nav-item"> <a class="nav-link" href="/register">Signup</a></li>
-<%}else{%>
-<li class="nav-item"> <a class="nav-link"href="/user_profile_dashboard_settings">signed in as <%=currentUser.username%></a></li>
-<li class="nav-item"> <a class="nav-link" href="/search_mask_sentiment_analysis">sentiment analysis</a> </li>
-<li class="nav-item"> <a class="nav-link" href="#">deal room analysis</a> </li>
-<li class="nav-item"> <a class="nav-link" href="#"> market size & market dynamics</a> </li>
-<li class="nav-item"> <a class="nav-link" href="#">market funnel for products</a> </li>
-<li class="nav-item"> <a class="nav-link" href="#">patent analysis</a> </li>
-<li class="nav-item"> <a class="nav-link" href="#">competitor analysis</a> </li>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="nav justify-content-end" >
+        <li class="nav-item dropdown">
+        <%# <li class="nav-item active"> <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a></li> %> 
+        <%# <li class="nav-item"><a class="nav-link" href="#">Features</a> </li> %>
+        <%if(!currentUser){%>
+        <li class="nav-item"> <a class="nav-link" href="/login">Login</a> </li> 
+        <li class="nav-item"> <a class="nav-link" href="/register">Signup</a></li>
+        <%}else{%>
+        <li class="nav-item"> <a class="nav-link"href="/user_profile_dashboard_settings">signed in as <%=currentUser.username%></a></li>
+        <li class="nav-item"> <a class="nav-link" href="/search_mask_sentiment_analysis">sentiment analysis</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#">deal room analysis</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#"> market size & market dynamics</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#">market funnel for products</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#">patent analysis</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#">competitor analysis</a> </li>
 
-<li class="nav-item"> <a class="nav-link" href="/logout">Logout</a> </li>
-<%}%>
-</ul>
-</div>
+        <li class="nav-item"> <a class="nav-link" href="/logout">Logout</a> </li>
+        <%}%>
+        </ul>
+    </div>
 </nav>
+
+<div class="container">
+<%if (error && error.length >0) { %>
+<div class="alert alert-danger" role="alert">
+    <h1> <%=error%></h1>
+    </div>
+    <% } %>
+    
+    <%if (success && success.length >0) { %>
+    <div class="alert alert-success" role="alert">
+    <h1> <%=success%></h1>
+    </div>
+     <% } %>
+</div>
+
+    

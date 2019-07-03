@@ -8,7 +8,7 @@ router.get ("/landing_page",middleware.isLoggedIn,function(req,res){
 
  });
 
-
+ 
 
 
 module.exports = router ;

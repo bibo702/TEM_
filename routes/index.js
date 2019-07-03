@@ -4,7 +4,7 @@ var passport=require("passport");
 var User =require("../models/user");
 
 router.get ("/", function(req,res){
-        res.render("login");
+        res.render("login",{currentUser:req.user});
     
  });
  //==================== //----------AUTH ROUTES-------------//====================
@@ -22,9 +22,12 @@ router.get ("/", function(req,res){
      User.register( newUser , req.body.password, function(err,user){
          if(err){
          console.log(err.message);
+            
+         req.flash("error",err.message);
          return res.render("register");
          }
          passport.authenticate("local")(req,res,function(){
+            req.flash("success","Welcome to TEM TOOL ", user.username);
           res.redirect("landing_page");
          });
      });
@@ -32,6 +35,8 @@ router.get ("/", function(req,res){
  
  // show login from
  router.get("/login", function(req,res){
+    
+
      res.render("login");
  });
  
@@ -47,6 +52,7 @@ router.get ("/", function(req,res){
  //logout route
  router.get("/logout",function(req,res){
       //comes from the installed packages
+      req.flash("success"," you are logged out");
      req.logout();
       res.redirect("/");
   });
