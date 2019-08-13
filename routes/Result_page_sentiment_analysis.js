@@ -7,7 +7,6 @@ const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const discovery = new DiscoveryV1({ version: '2019-02-01' });
 const parseJson = require('parse-json');
 var fileManger = require("../middleware/fileManager");
-var jsonoutput=require ('../output.json')
 const fs = require('fs');
 
 // function readJSONFile(filename, callback) {
@@ -107,15 +106,17 @@ router.get ("/Result_page_sentiment_analysis",function(req,res){
           } else {
         //     // var dataresults=results;
         //    // to save the output in different json with current time and date 
-        //     // var today = new Date();   
-        //     // var date = today.getFullYear()+'_'+(today.getMonth()+1)+'_'+today.getDate();
-        //     // var today = new Date();
-        //     // var time = today.getHours() + 'h'+today.getMinutes() +"s" + today.getSeconds();
-        //     // var datetime = date+'_'+time+'.json';
-        //     // var filename=__dirname+'/../data/'+datetime;
+            var today = new Date();   
+            var date = today.getFullYear()+'_'+(today.getMonth()+1)+'_'+today.getDate();
+            var today = new Date();
+            var time = today.getHours() + 'h'+today.getMinutes() +"s" + today.getSeconds();
+            var datetime = date+'_'+time+'.json';
+            var filename=__dirname+'/../data/'+datetime;
         //     // fileManger.createNewFile(filename); 
-
+// -------------------------d'abord stringfy---------------------------------------------------------------------------------
             var jsonContent = JSON.stringify(results, null, 2);
+// ----------------------------------------------------------------------------------------------------------
+
         //     // console.log(JSON.stringify(results, null, 2));
         //     // var jsonContents = JSON.parse(results);
         //     // console.log(jsonContents);
@@ -124,61 +125,50 @@ router.get ("/Result_page_sentiment_analysis",function(req,res){
         //     // console.log(jsonContents);
         //     // var jsonContentparsed = JSON.parse(results);   
             
-        //     // console.log('matching_results ==>'+body.data.matching_results + '     Time ==>'+ body.headers.date   ); 
-        //     // console.log("your query was ==>"+ params.natural_language_query);
-            //  res.render("Result_page_sentiment_analysis",{currentUser:req.user,query:query,jsonContent:jsonContent});
 
-/* <h2>Matching Results= <%=jsonContents.matching_results%> </h2>
-         
-         <% jsonContents.results.forEach((element) => { %>
-         <li> 
-          <a> <%=JSON.stringify(element.url, null, 2)%></a> 
-                     - <strong><%= JSON.stringify(element.crawl_date, null, 2) %></strong> 
-                     - <%= JSON.stringify(element.text, null, 2) %>       
-                     - <%= JSON.stringify(element.enriched_title.sentiment, null, 2) %>       
-                     
-                     </li>
-                    <% }) %>
-         </div>   */
+
+ 
               
         // //     // ___________________SAVED RESULT OF THE LAST QUERY TO WORK WITH IT______________________   
         // //     //    Todo's : ouput mit datum speichern (und uhrzeit) filename =datum und uhrzeit als variable speichern und dan variable als filename 
         // //     //   den datei namen zusammenbauer var fileame = string output+datum+uhrzeit 
-        // //     //   write file=filename
+        // //     //   write file=filename'./output.json'
 
-              fs.writeFile('./output.json', jsonContent  , 'utf8', function (err) {
+              fs.writeFile(filename, jsonContent  , 'utf8', function (err) {
                 if (err) {
                     console.log("An error occured while writing JSON Object to File.");
                     return console.log(err);
+                }else{
+                  var contents = fs.readFileSync(filename);
+                  var jsonContents = JSON.parse(contents);
+               //   //  fileManger.createNewFile(filename); 
+               
+               
+               
+                 res.render("Result_page_sentiment_analysis",{jsonContents:jsonContents,query:query});
                 }
              console.log("JSON file has been saved.");
             });
-        // //     // ____________________________________________________________________________________________      
-            
+//         // //     // ____________________________________________________________________________________________      
+
          }
 
         })
 
 //___________________USE THE SAVED RESULT OF THE LAST QUERY TO WORK WITH IT______________________      
-   var contents = fs.readFileSync('./output.json');
-   var jsonContents = JSON.parse(contents);
-//   //  fileManger.createNewFile(filename); 
+//    var contents = fs.readFileSync('./output.json');
+//    var jsonContents = JSON.parse(contents);
+// //   //  fileManger.createNewFile(filename); 
 
-//    console.log(jsonContents.results);
-//   //  console.log(JSON.stringify(jsonContent.results[0].url, null, 2));
-//   //  console.log(JSON.stringify(jsonContent.results[0].crawl_date, null, 2));
 
- res.render("Result_page_sentiment_analysis",{jsonContents:jsonContents,query:query});
+
+//   res.render("Result_page_sentiment_analysis",{jsonContents:jsonContents,query:query});
   
 // // readJSONFile('./output.json', function (err, json) {
 // //      if(err) { throw err; }
 // //     var jsonContent = JSON.stringify(json, null, 2);
     
-// //     // ,json.matching_results,,,,,,json.results[0].result_metadata.score
-// //     // json.results[0].entities.sentiment.score
-// //    console.log(jsonContent);
-   
-  
+ 
 // //   });
 //  //___________________________________________________________________________________________________   
   // res.render("Result_page_sentiment_analysis",{currentUser:req.user,jsonContent:jsonContent,query:query}); 

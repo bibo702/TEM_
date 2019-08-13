@@ -2,8 +2,11 @@ var mongoose = require ("mongoose");
 
 // Schema SetUP
 var resultSchema = new mongoose.Schema({
-    name: String,
-     
+    url: String,
+    crawl_date: String,
+    text: String,
+    sentiment: String
+
     
 });
 
