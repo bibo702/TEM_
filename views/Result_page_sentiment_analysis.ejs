@@ -1,4 +1,4 @@
-<%include ./partials/header%>
+<%include partials/header%>
 
 <html lang="en">
 <head>
@@ -20,6 +20,30 @@
         height: 50%;
     }
 </style>
+<div id="output_results">
+<h2>Search Results for <%=query%> </h2>
+<h2>Matching Results= <%=jsonContents.matching_results%> </h2>
+         
+         <% jsonContents.results.forEach((element) => { %>
+         <li> 
+          <a> <%=JSON.stringify(element.url, null, 2)%></a> 
+                     - <strong><%= JSON.stringify(element.crawl_date, null, 2) %></strong> 
+                     - <%= JSON.stringify(element.text, null, 2) %>       
+                     - <%= JSON.stringify(element.enriched_title.sentiment, null, 2) %>       
+                     
+                     </li>
+                    <% }) %>
+         </div>   
+ 
+
+
+
+<form action="/Result_page_sentiment_analysis" method="GET">
+          <input type="text" name="data" placeholder="search stuff" >
+          <input type="submit">
+</form> 
+
+  
 <body>
 
     <button id="renderBtn">
@@ -30,16 +54,6 @@
     </div>
 
 </body>
-
-<%=jsonContent%>
- 
-<form action="/Result_page_sentiment_analysis" method="GET">
-          <input type="text" name="data" placeholder="search stuff" >
-          <input type="submit">
-</form> 
-    
-
-
   <%# ---------------------------------------------------------------------------- %>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
@@ -111,4 +125,4 @@ $("#renderBtn").click(
 	<canvas id="pieChart"></canvas>
 </div>
 
-<%include ./partials/footer%>
+<%include partials/footer%>
