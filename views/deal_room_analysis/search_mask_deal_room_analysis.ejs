@@ -1,0 +1,24 @@
+<%include ../partials/header%>
+
+<body>
+  <div class="container">
+    <h1>Files Upload</h1>
+    <hr />
+    <div class="row">
+      <div class="col-md-6">
+        <form
+          action="deal_room_analysis"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <div class="form-group">
+            <input type="file" name="blogimage" multiple />
+          </div>
+
+          <button type="submit" class="btn btn-info">upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+<%include ../partials/footer%>

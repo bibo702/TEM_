@@ -1,0 +1,158 @@
+<%include ../partials/header%>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <title>Sentiment Analysis</title>
+    <script src="path/to/chartjs/dist/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+  </head>
+
+  <%#
+  ----------------------------------------------------------------------------
+  %>
+  <style>
+    .container {
+      width: 50%;
+      height: 50%;
+    }
+  </style>
+  <div id="output_results">
+    <h2>Search Results for <%=query%></h2>
+    <h2>Matching Results= <%=jsonContents.matching_results%></h2>
+
+    <% jsonContents.results.forEach((element) => { %>
+    <li>
+      <a> <%=JSON.stringify(element.url, null, 2)%></a>
+      - <strong><%= JSON.stringify(element.crawl_date, null, 2) %></strong>
+      - <%= JSON.stringify(element.text, null, 2) %> - <%=
+      JSON.stringify(element.enriched_title.sentiment, null, 2) %>
+    </li>
+    <% }) %>
+  </div>
+
+  <form action="/Result_page_sentiment_analysis" method="GET">
+    <input type="text" name="data" placeholder="search stuff" />
+    <input type="submit" />
+  </form>
+
+  <body>
+    <button id="renderBtn">
+      Render
+    </button>
+    <div class="container">
+      <canvas id="myChart"></canvas>
+    </div>
+  </body>
+  <%#
+  ----------------------------------------------------------------------------
+  %>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <%#
+  ----------------------------------------------------------------------------
+  %>
+  <script>
+    var barChart = document.getElementById('barChart').getContext('2d');
+
+    var myBarChart = new Chart(barChart, {
+      type: 'bar',
+      data: {
+        labels: [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec'
+        ],
+        datasets: [
+          {
+            label: 'Sales',
+            backgroundColor: 'rgb(23, 125, 255)',
+            borderColor: 'rgb(23, 125, 255)',
+            data: [3, 2, 9, 5, 4, 6, 4, 6, 7, 8, 7, 4]
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true
+              }
+            }
+          ]
+        }
+      }
+    });
+  </script>
+  <script>
+    function renderChart(data, labels) {
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'This week',
+              data: data
+            }
+          ]
+        }
+      });
+    }
+
+    $('#renderBtn').click(function() {
+      // data could be the number of articles
+      data = [20000, 14000, 12000, 15000, 18000, 19000, 22000];
+      // data could be the date of the publicated articles
+      labels = [
+        'sunday',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday'
+      ];
+      renderChart(data, labels);
+    });
+  </script>
+  <%#
+  ----------------------------------------------------------------------------
+  %>
+
+  <div class="container">
+    <%if (IBM_message && IBM_message.length >0) { %>
+
+    <div class="alert alert-warning" role="alert">
+      <h5><%=IBM_message%></h5>
+    </div>
+    <%}%>
+  </div>
+  <div id="chart-container">
+    <canvas id="pieChart"></canvas>
+  </div>
+
+  <%include ../partials/footer%>
+</html>

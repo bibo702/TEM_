@@ -5,9 +5,9 @@ var request = require('request');
 result_db = require('../models/result');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const discovery = new DiscoveryV1({ version: '2019-02-01' });
+const fs = require('fs');
 const parseJson = require('parse-json');
 var fileManger = require('../middleware/fileManager');
-const fs = require('fs');
 
 // function readJSONFile(filename, callback) {
 //   fs.readFile(filename, function (err, data) {
@@ -72,7 +72,10 @@ const fs = require('fs');
 //@acces Public
 router.get('/search_mask_sentiment_analysis', function(req, res) {
   console.log('you are in search mask');
-  res.render('search_mask_sentiment_analysis', { currentUser: req.user });
+
+  res.render('./sentiment_analysis/search_mask_sentiment_analysis', {
+    currentUser: req.user
+  });
 });
 
 //@route GET Result_page_sentiment_analysis
@@ -80,7 +83,8 @@ router.get('/search_mask_sentiment_analysis', function(req, res) {
 //@acces Public
 router.get('/Result_page_sentiment_analysis', function(req, res) {
   var query = req.query.data;
-  console.log('Your query is : ' + query);
+  console.log('Your query is : ' + query, 'count is', req.body.count);
+
   var params = {
     //  query: 'Invensity gmbh',
     // 'enriched_text.concepts.text':'artificial intelligence',
@@ -91,7 +95,7 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
     // natural_language_query:'',
     query: req.query.data,
     return: 'title,url,host,crawl_date',
-    count: '40',
+    count: req.body.count, //parseInt(req.body.input.count)
     bias: 'publication_date',
     highlight: true //if you want to enable highlight
   };
@@ -102,7 +106,7 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
       // console.log(error.body) ;
       console.log(error.code);
       req.flash('IBM_message', error.body);
-      res.render('Result_page_sentiment_analysis', {
+      res.render('./sentiment_analysis/Result_page_sentiment_analysis', {
         currentUser: req.user,
         query: query
       });
@@ -148,7 +152,7 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
           var jsonContents = JSON.parse(contents);
           //   //  fileManger.createNewFile(filename);
 
-          res.render('Result_page_sentiment_analysis', {
+          res.render('./sentiment_analysis/Result_page_sentiment_analysis', {
             jsonContents: jsonContents,
             query: query
           });
@@ -164,7 +168,7 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
   //    var jsonContents = JSON.parse(contents);
   // //   //  fileManger.createNewFile(filename);
 
-  //   res.render("Result_page_sentiment_analysis",{jsonContents:jsonContents,query:query});
+  //   res.render("./sentiment_analysis/Result_page_sentiment_analysis",{jsonContents:jsonContents,query:query});
 
   // // readJSONFile('./output.json', function (err, json) {
   // //      if(err) { throw err; }
@@ -172,7 +176,7 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
 
   // //   });
   //  //___________________________________________________________________________________________________
-  // res.render("Result_page_sentiment_analysis",{currentUser:req.user,jsonContent:jsonContent,query:query});
+  // res.render("./sentiment_analysis/Result_page_sentiment_analysis",{currentUser:req.user,jsonContent:jsonContent,query:query});
 });
 
 //   params.natural_language_query=req.query.data;

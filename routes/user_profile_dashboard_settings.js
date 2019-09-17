@@ -1,15 +1,24 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
-var middleware=require("../middleware");
+var middleware = require('../middleware');
+var User = require('../models/user');
 
+router.get('/user_profile_dashboard_settings', middleware.isLoggedIn, function(
+  req,
+  res
+) {
+  User.find({}, (err, allUsers) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render('user_profile_dashboard_settings', {
+        Users: allUsers,
+        currentUser: req.user
+      });
+    }
+  });
 
-router.get ("/user_profile_dashboard_settings",middleware.isLoggedIn,function(req,res){
-     res.render("user_profile_dashboard_settings",{currentUser:req.user});
-     // 
-console.log(req.user);
- });
+  //
+});
 
-
-
-
-module.exports = router ;
+module.exports = router;

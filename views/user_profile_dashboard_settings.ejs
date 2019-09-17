@@ -1,5 +1,6 @@
+<h1>user_profile_dashboard_settings <%=currentUser%></h1>
+<h2>Stuff about user Profile and the dashboard will come here</h2>
 
-<h1>  user_profile_dashboard_settings    <%=currentUser%></h1>
-<h2>Stuff about user Profile and the dashboard  will come here</h2>
-
- 
+<%Users.forEach( function(Users) { %>
+<li><%= Users.username%></li>
+<%});%>

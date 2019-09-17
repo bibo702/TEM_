@@ -12,9 +12,13 @@ var indexRoutes = require('./routes/index');
 var succeslog = require('./routes/landing_page');
 var user_profile_dashboard_settings = require('./routes/user_profile_dashboard_settings');
 var search_mask_sentiment_analysis = require('./routes/search_mask_sentiment_analysis');
-var Result_page_sentiment_analysis = require('./routes/Result_page_sentiment_analysis');
+var sentiment_analysis = require('./routes/sentiment_analysis');
+var deal_room_analysis = require('./routes/deal_room_analysis');
 
-var url = process.env.DATABASE_URL || 'mongodb://localhost:27017/TEM_db';
+var url =
+  process.env.DATABASE_URL ||
+  'mongodb://localhost:27017/TEM_db' ||
+  'mongodb://127.0.0.1:27017/TEM_db';
 mongoose
   .connect(url, { useNewUrlParser: true })
   .then(() => console.log('Connection Successful'))
@@ -55,7 +59,8 @@ app.use(indexRoutes);
 app.use(succeslog);
 app.use(user_profile_dashboard_settings);
 // app.use(search_mask_sentiment_analysis);
-app.use(Result_page_sentiment_analysis);
+app.use(sentiment_analysis);
+app.use(deal_room_analysis);
 
 //---------------------------//Start Server//-----------------//
 app.listen(3000, function() {
