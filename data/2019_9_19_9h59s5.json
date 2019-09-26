@@ -1,0 +1,4 @@
+{
+  "code": 400,
+  "error": "Invalid query syntax 'e' at index 5 in 'term(enriched_text.keywords.sentiment.label,count:80)'"
+}

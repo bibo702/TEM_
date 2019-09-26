@@ -1,158 +1,204 @@
 <%include ../partials/header%>
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    />
-    <title>Sentiment Analysis</title>
-    <script src="path/to/chartjs/dist/Chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
-  </head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+  />
+  <title>Sentiment Analysis</title>
+  <script src="path/to/chartjs/dist/Chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+</head>
 
-  <%#
-  ----------------------------------------------------------------------------
-  %>
-  <style>
-    .container {
-      width: 50%;
-      height: 50%;
-    }
-  </style>
-  <div id="output_results">
-    <h2>Search Results for <%=query%></h2>
-    <h2>Matching Results= <%=jsonContents.matching_results%></h2>
+<%# ----------------------------------------------------------------------------
+%>
 
-    <% jsonContents.results.forEach((element) => { %>
-    <li>
-      <a> <%=JSON.stringify(element.url, null, 2)%></a>
-      - <strong><%= JSON.stringify(element.crawl_date, null, 2) %></strong>
-      - <%= JSON.stringify(element.text, null, 2) %> - <%=
-      JSON.stringify(element.enriched_title.sentiment, null, 2) %>
-    </li>
-    <% }) %>
+ 
+        
+<style>
+  .container {
+    width: 50%;
+    height: 50%;
+  }
+</style>
+<%# ---------------- %>
+<header class="jumbotron">
+        <div class="container">
+            <h1><span class="glyphicon glyphicon-search"></span> The Sentiment Analysis</h1>
+            <p>Type in your query</p>
+            
+             <p>
+                <form action="/Result_page_sentiment_analysis" method="GET">
+                  <input type="text" name="data" placeholder="search" />
+                  <input class="btn btn-primary " type="submit" />
+                </form>
+              </p>
+              <%try {%>
+                 <p>Counter <%=count%>  Since <%=date%> </p>   
+                <%} catch (error) {%>
+                  <%  console.log(error); %>
+                 
+                  <% }%>
+              
+        </div>
+</header>
+
+<form action="/Result_page_sentiment_analysis" method="GET">
+  <input type="text" name="data" placeholder="search stuff" />
+  <input type="submit" />
+</form>
+<%try { %>
+<%# ---------------- %>
+<div id="output_results">
+  <h2>Search Results for <%=query%></h2>
+  <h2>Matching Results= <%=jsonContents.matching_results%></h2>
+</div>
+
+
+  <% jsonContents.results.forEach((element) => { %>
+  <div class="card"  style="display:flex; flex-wrap:wrap;">
+ 
+      <div class="card">
+  <div class="card-header">
+      <strong>title: <%=JSON.stringify(element.title, null, 2) %></strong>
   </div>
+  <div class="card-body">
+    <blockquote class="blockquote mb-0">
+        <li><strong>Text:</strong>  <p><%= JSON.stringify(element.text, null, 2) %></p> </li>
+     
+        <li><strong>Sentiment:</strong> <p> <%=JSON.stringify(element.enriched_title.sentiment.document.label, null, 2) %></p></li>
+        <li><strong>Keywords:</strong> <p><%=JSON.stringify(element.enriched_title.keywords[0].text , null, 2) %> -</p></li>
+        <%var str =JSON.stringify(element.url, null, 2)%>
+        <li><strong>Url:</strong> <%= str.replace(/['"]+/g, '')%></li>
+      <footer class="blockquote-footer"><strong><%= JSON.stringify(element.crawl_date, null, 2) %></strong><cite title="Source Title">  -<%var str =JSON.stringify(element.url, null, 2)%>
+    <a> <%= str.replace(/['"]+/g, '')%></a></cite></footer>
+    </blockquote>
+  </div>
+</div>    
+</div>
+</div>
+  <% }) %>            
+<%} catch (error) {%>
 
-  <form action="/Result_page_sentiment_analysis" method="GET">
-    <input type="text" name="data" placeholder="search stuff" />
-    <input type="submit" />
-  </form>
+  <%console.log(error);%>
+   
+<%}%>
 
-  <body>
-    <button id="renderBtn">
-      Render
-    </button>
-    <div class="container">
-      <canvas id="myChart"></canvas>
-    </div>
-  </body>
-  <%#
-  ----------------------------------------------------------------------------
-  %>
+ 
+<%# ---------------- %> <%# ---------------- %>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <%#
-  ----------------------------------------------------------------------------
-  %>
-  <script>
-    var barChart = document.getElementById('barChart').getContext('2d');
+<body>
+  <button id="renderBtn">
+    Render
+  </button>
+  <div class="container">
+    <canvas id="myChart"></canvas>
+  </div>
+</body>
+<%# ----------------------------------------------------------------------------
+%>
 
-    var myBarChart = new Chart(barChart, {
-      type: 'bar',
-      data: {
-        labels: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec'
-        ],
-        datasets: [
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<%# ----------------------------------------------------------------------------
+%>
+<script>
+  var barChart = document.getElementById('barChart').getContext('2d');
+
+  var myBarChart = new Chart(barChart, {
+    type: 'bar',
+    data: {
+      labels: [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ],
+      datasets: [
+        {
+          label: 'Sales',
+          backgroundColor: 'rgb(23, 125, 255)',
+          borderColor: 'rgb(23, 125, 255)',
+          data: [3, 2, 9, 5, 4, 6, 4, 6, 7, 8, 7, 4]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [
           {
-            label: 'Sales',
-            backgroundColor: 'rgb(23, 125, 255)',
-            borderColor: 'rgb(23, 125, 255)',
-            data: [3, 2, 9, 5, 4, 6, 4, 6, 7, 8, 7, 4]
+            ticks: {
+              beginAtZero: true
+            }
           }
         ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true
-              }
-            }
-          ]
-        }
+      }
+    }
+  });
+</script>
+<script>
+  function renderChart(data, labels) {
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'This week',
+            data: data
+          }
+        ]
       }
     });
-  </script>
-  <script>
-    function renderChart(data, labels) {
-      var ctx = document.getElementById('myChart').getContext('2d');
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'This week',
-              data: data
-            }
-          ]
-        }
-      });
-    }
+  }
 
-    $('#renderBtn').click(function() {
-      // data could be the number of articles
-      data = [20000, 14000, 12000, 15000, 18000, 19000, 22000];
-      // data could be the date of the publicated articles
-      labels = [
-        'sunday',
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-        'saturday'
-      ];
-      renderChart(data, labels);
-    });
-  </script>
-  <%#
-  ----------------------------------------------------------------------------
-  %>
+  $('#renderBtn').click(function() {
+    // data could be the number of articles
+    data = [20000, 14000, 12000, 15000, 18000, 19000, 22000];
+    // data could be the date of the publicated articles
+    labels = [
+      'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday'
+    ];
+    renderChart(data, labels);
+  });
+</script>
+<%# ----------------------------------------------------------------------------
+%>
 
-  <div class="container">
-    <%if (IBM_message && IBM_message.length >0) { %>
+<div class="container">
+  <%if (IBM_message && IBM_message.length >0) { %>
 
-    <div class="alert alert-warning" role="alert">
-      <h5><%=IBM_message%></h5>
-    </div>
-    <%}%>
+  <div class="alert alert-warning" role="alert">
+    <h5><%=IBM_message%></h5>
   </div>
-  <div id="chart-container">
-    <canvas id="pieChart"></canvas>
-  </div>
+  <%}%>
+</div>
 
-  <%include ../partials/footer%>
-</html>
+
+<div id="chart-container">
+  <canvas id="pieChart"></canvas>
+</div>
+
+<%include ../partials/footer%>

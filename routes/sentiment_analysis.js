@@ -3,78 +3,45 @@ var router = express.Router();
 var middleware = require('../middleware');
 var request = require('request');
 result_db = require('../models/result');
+// Counter = require('../models/counter');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const discovery = new DiscoveryV1({ version: '2019-02-01' });
 const fs = require('fs');
 const parseJson = require('parse-json');
 var fileManger = require('../middleware/fileManager');
 
-// function readJSONFile(filename, callback) {
-//   fs.readFile(filename, function (err, data) {
-//     if(err) {
-//       callback(err);
-//       return;
-//     }
-//     try {
-//       callback(null, JSON.parse(data));
-//     } catch(exception) {
-//       callback(exception);
-//     }
+// function getRoute(req) {
+//   const route = req.route ? req.route.path : ''; // check if the handler exist
+//   const baseUrl = req.baseUrl ? req.baseUrl : ''; // adding the base url if the handler is a child of another handler
+
+//   return route ? `${baseUrl === '/' ? '' : baseUrl}${route}` : 'unknown route';
+// }
+
+// router.use((req, res, next) => {
+//   res.on('finish', () => {
+//     console.log(`${req.method} ${getRoute(req)} ${res.statusCode}`);
 //   });
-// }
-
-// // TEM_DISCOVERY_INV
-// var params = {
-//   //  query: 'Invensity gmbh',
-//   // 'enriched_text.concepts.text':'artificial intelligence',
-
-//     // query: "TESLA",
-//     // filter: "language:(english|en),crawl_date>2019-05-05T12:00:00+0200,crawl_date<2019-07-05T12:00:00+0200",
-//     // "deduplicate": true,
-//     // "count": 5,
-//     // "return": "title,url,host,crawl_date"
-
-//   natural_language_query:'',
-//   environment_id: 'system',
-//   collection_id: 'news-en',
-//   // der Wert für collection_id der deutschen Sammlung news-de
-//   'configuration_id': '',
-//  'passages': true, //if you want to enable passages
-//   //  return: 'text, title, url',
-//    count:'5',
-//    bias:'publication_date',
-//    highlight: false //if you want to enable highlight
-// }
-
-// // json data
-// var jsonData = '{"persons":[{"name":"John","city":"New York"},{"name":"Phil","city":"Ohio"}]}';
-
-// // parse json
-// var jsonObj = JSON.parse(jsonData);
-// console.log(jsonObj);
-
-// // stringify JSON Object
-// var jsonContent = JSON.stringify(jsonObj);
-// console.log(jsonContent);
-
-// fs.writeFile("output.json", jsonContent, 'utf8', function (err) {
-//     if (err) {
-//         console.log("An error occured while writing JSON Object to File.");
-//         return console.log(err);
-//     }
-
-//     console.log("JSON file has been saved.");
+//   next();
 // });
-// Url: https://gateway-fra.watsonplatform.net/discovery/api
+var today = new Date();
+var date =
+  today.getFullYear() + '_' + (today.getMonth() + 1) + '_' + today.getDate();
+var today = new Date();
+var time =
+  today.getHours() + 'h' + today.getMinutes() + 's' + today.getSeconds();
 
+var obj = { previouscount: 0, currentcounter: 0, date: '' };
+var count = 0;
 //@route GET /search_mask_sentiment_analysis
 //@desc  GET the search mask for the sentiment analysis
 //@acces Public
 router.get('/search_mask_sentiment_analysis', function(req, res) {
   console.log('you are in search mask');
-
+  var oldcounts = JSON.parse(fs.readFileSync('./counter.json'));
   res.render('./sentiment_analysis/search_mask_sentiment_analysis', {
-    currentUser: req.user
+    currentUser: req.user,
+    count: oldcounts.previouscount,
+    date: oldcounts.date
   });
 });
 
@@ -83,24 +50,19 @@ router.get('/search_mask_sentiment_analysis', function(req, res) {
 //@acces Public
 router.get('/Result_page_sentiment_analysis', function(req, res) {
   var query = req.query.data;
-  console.log('Your query is : ' + query, 'count is', req.body.count);
+  console.log('Your query is : ' + query, 'count is', req.query.count);
 
   var params = {
-    //  query: 'Invensity gmbh',
-    // 'enriched_text.concepts.text':'artificial intelligence',
     environment_id: 'system',
     collection_id: 'news-en',
-    configuration_id: '',
-    passages: true, //if you want to enable passages
-    // natural_language_query:'',
+    // // configuration_id: '',
+    // // natural_language_query: req.query.data
     query: req.query.data,
-    return: 'title,url,host,crawl_date',
-    count: req.body.count, //parseInt(req.body.input.count)
-    bias: 'publication_date',
-    highlight: true //if you want to enable highlight
+    count: req.query.count, //parseInt(req.body.input.count
+    // return: 'title,url,host,crawl_date',
+    aggregations: req.query.aggregation //'enriched_text.keywords.sentiment.label'
   };
-
-  // To do's counter einbauen
+  // __________discovery.query starts________________________________________
   discovery.query(params, (error, results) => {
     if (error) {
       // console.log(error.body) ;
@@ -111,18 +73,26 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
         query: query
       });
     } else {
-      //     // var dataresults=results;
+      //@desc Thease variables are a counter for ibm discovery.query
+      //@accec public
+      var oldcounts = JSON.parse(fs.readFileSync('./counter.json'));
+      console.log('Old Counts------>', oldcounts);
+      obj.previouscount = oldcounts.previouscount + 1;
+      obj.currentcounter = count + 1;
+      obj.date = date;
+
+      console.log(
+        'currentcounter= ',
+        obj.currentcounter,
+        'previouscount',
+        obj.previouscount,
+        'Time',
+        obj.date
+      );
+      fs.writeFileSync('./counter.json', JSON.stringify(obj));
+
       //    // to save the output in different json with current time and date
-      var today = new Date();
-      var date =
-        today.getFullYear() +
-        '_' +
-        (today.getMonth() + 1) +
-        '_' +
-        today.getDate();
-      var today = new Date();
-      var time =
-        today.getHours() + 'h' + today.getMinutes() + 's' + today.getSeconds();
+
       var datetime = date + '_' + time + '.json';
       var filename = __dirname + '/../data/' + datetime;
       //     // fileManger.createNewFile(filename);
@@ -138,11 +108,7 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
       //     // console.log(jsonContents);
       //     // var jsonContentparsed = JSON.parse(results);
 
-      // //     // ___________________SAVED RESULT OF THE LAST QUERY TO WORK WITH IT______________________
-      // //     //    Todo's : ouput mit datum speichern (und uhrzeit) filename =datum und uhrzeit als variable speichern und dan variable als filename
-      // //     //   den datei namen zusammenbauer var fileame = string output+datum+uhrzeit
-      // //     //   write file=filename'./output.json'
-
+      // //     // ___________________SAVE RESULT OF QUERY AS JSON FILE______________________
       fs.writeFile(filename, jsonContent, 'utf8', function(err) {
         if (err) {
           console.log('An error occured while writing JSON Object to File.');
@@ -154,7 +120,9 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
 
           res.render('./sentiment_analysis/Result_page_sentiment_analysis', {
             jsonContents: jsonContents,
-            query: query
+            query: query,
+            count: oldcounts.previouscount,
+            date: oldcounts.date
           });
         }
         console.log('JSON file has been saved.');
@@ -162,21 +130,35 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
       // ____________________________________________________________________________________________
     }
   });
+  // __________discovery.query ends_________________________________________________________________________
 
   //___________________USE THE SAVED RESULT OF THE LAST QUERY TO WORK WITH IT______________________
-  //    var contents = fs.readFileSync('./output.json');
-  //    var jsonContents = JSON.parse(contents);
+  // var contents = fs.readFileSync('./output.json');
+  // var jsonContents = JSON.parse(contents);
   // //   //  fileManger.createNewFile(filename);
+  // try {
+  //   console.log(JSON.stringify(jsonContents.results.enriched_text, null, 2));
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
-  //   res.render("./sentiment_analysis/Result_page_sentiment_analysis",{jsonContents:jsonContents,query:query});
+  // res.render('./sentiment_analysis/Result_page_sentiment_analysis', {
+  //   jsonContents: jsonContents,
+  //   query: query
+  // });
 
-  // // readJSONFile('./output.json', function (err, json) {
-  // //      if(err) { throw err; }
-  // //     var jsonContent = JSON.stringify(json, null, 2);
-
-  // //   });
-  //  //___________________________________________________________________________________________________
-  // res.render("./sentiment_analysis/Result_page_sentiment_analysis",{currentUser:req.user,jsonContent:jsonContent,query:query});
+  // readJSONFile('./output.json', function(err, json) {
+  //   if (err) {
+  //     throw err;
+  //   }
+  //   var jsonContent = JSON.stringify(json, null, 2);
+  // });
+  //___________________________________________________________________________________________________
+  // res.render('./sentiment_analysis/Result_page_sentiment_analysis', {
+  //   currentUser: req.user,
+  //   jsonContent: jsonContent,
+  //   query: query
+  // });
 });
 
 //   params.natural_language_query=req.query.data;

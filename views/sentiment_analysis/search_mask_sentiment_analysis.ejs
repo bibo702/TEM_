@@ -7,17 +7,48 @@
 
 <!-- Load d3-cloud -->
 <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+ 
 
+
+
+<header class="jumbotron">
+    <div class="container">
+        <h1><span class="glyphicon glyphicon-search"></span> The Sentiment Analysis</h1>
+        <p>Type in your query</p>
+        
+         <p>
+            <form action="/Result_page_sentiment_analysis" method="GET">
+              <input type="text" name="data" placeholder="search" />
+              <input class="btn btn-primary " type="submit" />
+            </form>
+        </p>
+        <p>Counter <%=count%> Since <%=date%> </p>
+         
+
+    </div>
+</header>
+ 
+
+<form action="/Result_page_sentiment_analysis" method="GET">
+<input type="text" name="data" placeholder="search stuff" />
+<input type="submit" />
+</form>
 <!-- Form for search -->
 <div class="container">
 <div> 
   <form action="/Result_page_sentiment_analysis" method="GET">
-    
+    <label for="query"> 
+      Type in your query:  
     <input type="text" name="data" placeholder="search stuff" >
-     
-    
-      <input id="count" type="number" min="1"  step="1" value="20">
-       <input type="submit">
+
+    <label for="aggregation"> 
+        Type in your aggregation:  
+      <input type="text" name="aggregation" placeholder="aggregation" >
+    <label for="count">
+      Count: 
+      <input name="count" type="number" min="1"  step="1" value="20">
+    </label>
+      <input type="submit">
       
   </form> 
 
@@ -26,7 +57,7 @@
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 <script>
-var myWords = [{word: "Running", size: "10"}, {word: "Surfing", size: "20"}, {word: "Climbing", size: "50"}, {word: "Kiting", size: "30"}, {word: "Sailing", size: "20"}, {word: "Snowboarding", size: "60"} ]
+var myWords = [{word: "IBM", size: "10"}, {word: "Apple", size: "20"}, {word: "BMW", size: "50"}, {word: "Autonomous driving", size: "30"}, {word: "Sailing", size: "20"}, {word: "Snowboarding", size: "60"} ]
 
 // set the dimensions and margins of the graph
 var margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -71,6 +102,7 @@ function draw(words) {
         .text(function(d) { return d.text; });
 }
 </script>
+
 <%# -----------------Charts.js----------------------------------------------------------- %>
  
   <%# ---------------------------------------------------------------------------- %>
@@ -96,6 +128,7 @@ function draw(words) {
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  
   <title>Sentiment analysis</title>
 </head>
 
@@ -115,26 +148,20 @@ function draw(words) {
     let massPopChart = new Chart(myChart, {
       type:'pie', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
       data:{
-        labels:['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
+        labels:['Positive', 'Negative', 'Neutral'],
         datasets:[{
-          label:'Population',
+          label:'score',
           data:[
             617594,
             181045,
-            153060,
-            106519,
-            105162,
-            95072
+            153060
+          
           ],
           //backgroundColor:'green',
           backgroundColor:[
-            'rgba(255, 99, 132, 0.6)',
             'rgba(54, 162, 235, 0.6)',
-            'rgba(255, 206, 86, 0.6)',
-            'rgba(75, 192, 192, 0.6)',
-            'rgba(153, 102, 255, 0.6)',
-            'rgba(255, 159, 64, 0.6)',
-            'rgba(255, 99, 132, 0.6)'
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(255, 206, 86, 0.6)'
           ],
           borderWidth:1,
           borderColor:'#777',
@@ -145,8 +172,8 @@ function draw(words) {
       options:{
         title:{
           display:true,
-          text:'Largest Cities In Massachusetts',
-          fontSize:25
+          text:'Sentiment Analysis',
+          fontSize:20
         },
         legend:{
           display:true,
@@ -212,16 +239,14 @@ function draw(words) {
     let ChartResult = new Chart(myChartResult, {
       type:'bar', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
       data:{
-        labels:['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
+        labels:['Positive', 'Negative', 'Neutral'],
         datasets:[{
           label:'Population',
           data:[
             617594,
             181045,
-            153060,
-            106519,
-            105162,
-            95072
+            153060
+        
           ],
           //backgroundColor:'green',
           backgroundColor:[
