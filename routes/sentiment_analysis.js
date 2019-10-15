@@ -4,8 +4,18 @@ var middleware = require('../middleware');
 var request = require('request');
 result_db = require('../models/result');
 // Counter = require('../models/counter');
+
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
-const discovery = new DiscoveryV1({ version: '2019-02-01' });
+// const discovery = new DiscoveryV1({
+//   version: '2019-02-01' });
+const discovery = new DiscoveryV1({
+  iam_apikey: '18Byo1mG23FQhlyqRMrRFMIVY4vxT1djV2wKMmxIaSkZ',
+  url: 'https://gateway-fra.watsonplatform.net/discovery/api',
+  version: '2019-02-01'
+});
+// DISCOVERY_IAM_APIKEY=18Byo1mG23FQhlyqRMrRFMIVY4vxT1djV2wKMmxIaSkZ
+// DISCOVERY_URL=https://gateway-fra.watsonplatform.net/discovery/api
+
 const fs = require('fs');
 const parseJson = require('parse-json');
 var fileManger = require('../middleware/fileManager');
@@ -52,16 +62,28 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
   var query = req.query.data;
   console.log('Your query is : ' + query, 'count is', req.query.count);
 
+  // var params = {
+  //   environment_id: 'system',
+  //   collection_id: 'news-en',
+  //   // // configuration_id: '',
+  //   // // natural_language_query: req.query.data
+  //   query: req.query.data,
+  //   count: req.query.count, //parseInt(req.body.input.count
+  //   // return: 'title,url,host,crawl_date',
+  //   aggregations: req.query.aggregation //'enriched_text.keywords.sentiment.label'
+  // };
   var params = {
     environment_id: 'system',
     collection_id: 'news-en',
-    // // configuration_id: '',
-    // // natural_language_query: req.query.data
     query: req.query.data,
-    count: req.query.count, //parseInt(req.body.input.count
-    // return: 'title,url,host,crawl_date',
-    aggregations: req.query.aggregation //'enriched_text.keywords.sentiment.label'
+    count: 50,
+    return: 'title,url,host,crawl_date',
+    aggregations: [
+      'term(host).term(enriched_text.sentiment.document.label)',
+      'term(enriched_text.sentiment.document.label)'
+    ]
   };
+
   // __________discovery.query starts________________________________________
   discovery.query(params, (error, results) => {
     if (error) {
@@ -80,7 +102,6 @@ router.get('/Result_page_sentiment_analysis', function(req, res) {
       obj.previouscount = oldcounts.previouscount + 1;
       obj.currentcounter = count + 1;
       obj.date = date;
-
       console.log(
         'currentcounter= ',
         obj.currentcounter,

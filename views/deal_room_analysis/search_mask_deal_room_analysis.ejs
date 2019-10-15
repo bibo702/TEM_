@@ -1,24 +1,112 @@
 <%include ../partials/header%>
 
-<body>
+<header class="jumbotron">
   <div class="container">
-    <h1>Files Upload</h1>
-    <hr />
-    <div class="row">
-      <div class="col-md-6">
-        <form
-          action="deal_room_analysis"
-          method="post"
-          enctype="multipart/form-data"
-        >
-          <div class="form-group">
-            <input type="file" name="blogimage" multiple />
-          </div>
+    <h1>
+      <span class="glyphicon glyphicon-search"></span> The Deal room Analysis
+    </h1>
 
-          <button type="submit" class="btn btn-info">upload</button>
-        </form>
+    <div class="container">
+      <h1>Files Upload</h1>
+      <hr />
+      <div class="row">
+        <div class="col-md-6">
+          <%= typeof msg != 'undefined' ? msg : '' %>
+          <form
+            action="deal_room_analysis"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <div class="form-group">
+              <input type="file" name="myFile" multiple />
+            </div>
+
+            <button type="submit" class="btn btn-info">upload</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</body>
+</header>
+
+<div>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="extensions/filter-control/bootstrap-table-filter-control.css"
+  />
+  <script src="extensions/filter-control/bootstrap-table-filter-control.js"></script>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Keywords</th>
+        <th scope="col">Context</th>
+        <th scope="col">Availabe</th>
+        <th scope="col">Agree</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Foundation date</th>
+        <td>The company has been founded in 2006</td>
+        <td>image</td>
+        <td>
+          <button type="button" class="btn btn-success">Agree</button>
+          <button type="button" class="btn btn-secondary">
+            Search again
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Founder</th>
+        <td>....</td>
+        <td>image not found</td>
+        <td>
+          <button type="button" class="btn btn-success">Agree</button>
+          <button type="button" class="btn btn-secondary">
+            Search again
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Business plan</th>
+        <td>
+          The presented Business plan is based on a very conservative
+          claculation
+        </td>
+        <td>image found</td>
+        <td>
+          <button type="button" class="btn btn-success">Agree</button>
+          <button type="button" class="btn btn-secondary">
+            Search again</button
+          >r
+        </td>
+      </tr>
+
+      <tr>
+        <th scope="row">Strategy</th>
+        <td>the current Strategy reflects the changing market environment.</td>
+        <td>image found</td>
+        <td>
+          <button type="button" class="btn btn-success">Agree</button>
+          <button type="button" class="btn btn-secondary">
+            Search again
+          </button>
+        </td>
+      </tr>
+
+      <tr>
+        <th scope="row">USP</th>
+        <td>....</td>
+        <td>image not found</td>
+        <td>
+          <button type="button" class="btn btn-success">Agree</button>
+          <button type="button" class="btn btn-secondary">
+            Search again
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <%include ../partials/footer%>

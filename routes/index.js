@@ -4,7 +4,10 @@ var passport = require('passport');
 var User = require('../models/user');
 
 router.get('/', function(req, res) {
-  res.render('login', { currentUser: req.user });
+  res.render('landing_page', { currentUser: req.user });
+});
+router.get('/landing_cases', function(req, res) {
+  res.render('landing_cases', { currentUser: req.user });
 });
 //==================== //----------AUTH ROUTES-------------//====================
 
